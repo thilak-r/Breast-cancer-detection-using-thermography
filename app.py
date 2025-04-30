@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from PIL import Image
 import numpy as np
-from model import CNN_Model  # Assuming your CNN model is defined in model.py
+from model import CNN_Model
 
 # Initialize the Flask app
 app = Flask(__name__)
