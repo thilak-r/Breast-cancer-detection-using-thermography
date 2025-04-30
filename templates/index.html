@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Breast Cancer Detection</h1>
+    <p>Upload an image to detect if it's normal or sick.</p>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="image-file" name="file" accept="image/*" required />
+        <button type="submit">Predict</button>
+    </form>
+
+    <div class="result" id="result"></div>
+    <div class="error" id="error-message"></div>
+</div>
+
+<script>
+    document.getElementById('upload-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let fileInput = document.getElementById('image-file');
+        let file = fileInput.files[0];
+
+        if (!file) {
+            document.getElementById('error-message').textContent = "Please select an image file!";
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.prediction) {
+                document.getElementById('result').textContent = `Prediction: ${data.prediction}`;
+                document.getElementById('error-message').textContent = "";
+            } else if (data.error) {
+                document.getElementById('error-message').textContent = `Error: ${data.error}`;
+                document.getElementById('result').textContent = "";
+            }
+        })
+        .catch(error => {
+            document.getElementById('error-message').textContent = "An error occurred while processing the request.";
+            document.getElementById('result').textContent = "";
+        });
+    });
+</script>
+
+</body>
+</html>
